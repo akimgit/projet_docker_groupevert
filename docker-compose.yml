@@ -10,6 +10,9 @@ services:
       - .envdb
 
   phpmyadmin:
+    depends_on:
+      - db
+      - nginx
     image: phpmyadmin
     restart: always
     ports:
@@ -18,6 +21,8 @@ services:
       - .envphpadmin
 
   nginx:
+    depends_on:
+      - db
     image: "${NGINX_IMAGE_NAME}:${NGINX_IMAGE_VERSION}"
     container_name: web-nginx
     volumes:
@@ -28,23 +33,23 @@ services:
     restart: always
     env_file:
       - .envnginx
-   
+
   st-agent:
-  image: sematext/agent:latest
-  environment:
-    - INFRA_TOKEN=965d16fc-e7d0-46e4-a73c-caa7fec05175
-    - REGION=EU
-  cap_add:
-    - SYS_ADMIN
-  restart: always
-  volumes:
-    - /:/hostfs:ro
-    - /etc/passwd:/etc/passwd:ro
-    - /etc/group:/etc/group:ro
-    - /var/run/:/var/run
-    - /sys/kernel/debug:/sys/kernel/debug
-    - /sys:/host/sys:ro
-    - /dev:/hostfs/dev:ro
+    image: sematext/agent:latest
+    environment:
+      - INFRA_TOKEN=965d16fc-e7d0-46e4-a73c-caa7fec05175
+      - REGION=EU
+    cap_add:
+      - SYS_ADMIN
+    restart: always
+    volumes:
+      - /:/hostfs:ro
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - /var/run/:/var/run
+      - /sys/kernel/debug:/sys/kernel/debug
+      - /sys:/host/sys:ro
+      - /dev:/hostfs/dev:ro
 
 volumes:
   db_data: {}
